@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-// TODO CheckStyle: Wrong lexicographical order for 'java.util.HashMap' import (remove this comment once resolved)
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +13,10 @@ import java.util.Map;
  */
 public class CountryCodeConverter {
 
-    // TODO Task: pick appropriate instance variable(s) to store the data necessary for this class
+    private Map<String, String> coCconverter = new HashMap<>();
+    private Map<String, String> cCoconverter = new HashMap<>();
+
+    private int numCountries;
 
     /**
      * Default constructor which will load the country codes from "country-codes.txt"
@@ -33,9 +35,22 @@ public class CountryCodeConverter {
 
         try {
             List<String> lines = Files.readAllLines(Paths.get(getClass()
-                    .getClassLoader().getResource(filename).toURI()));
+                    .getClassLoader().getResource("country-codes.txt").toURI()));
+            lines.remove(0);
+            for (String line : lines) {
+                String[] parts = line.split("\\s+");
+                String country = String.join(" ", java.util.Arrays.copyOf(parts, parts.length - 3));
+                if (parts.length > 4) {
+                    coCconverter.put(parts[parts.length - 2], country);
+                    cCoconverter.put(country.toLowerCase(), parts[parts.length - 2]);
+                }
+                else {
+                    coCconverter.put(parts[2], parts[0]);
+                    cCoconverter.put(parts[0].toLowerCase(), parts[2]);
+                }
 
-            // TODO Task: use lines to populate the instance variable(s)
+                numCountries++;
+            }
 
         }
         catch (IOException | URISyntaxException ex) {
@@ -50,8 +65,7 @@ public class CountryCodeConverter {
      * @return the name of the country corresponding to the code
      */
     public String fromCountryCode(String code) {
-        // TODO Task: update this code to use an instance variable to return the correct value
-        return code;
+        return coCconverter.get(code.toUpperCase());
     }
 
     /**
@@ -60,8 +74,7 @@ public class CountryCodeConverter {
      * @return the 3-letter code of the country
      */
     public String fromCountry(String country) {
-        // TODO Task: update this code to use an instance variable to return the correct value
-        return country;
+        return cCoconverter.get(country.toLowerCase());
     }
 
     /**
@@ -69,7 +82,6 @@ public class CountryCodeConverter {
      * @return how many countries are included in this code converter.
      */
     public int getNumCountries() {
-        // TODO Task: update this code to use an instance variable to return the correct value
-        return 0;
+        return numCountries;
     }
 }
